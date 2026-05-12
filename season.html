@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Witness — Letters to Winter</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lora:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0c0a;
+    --paper: #f7f2e8;
+    --paper-dark: #ede5d0;
+    --ink: #1c1510;
+    --ink-soft: #3a2e22;
+    --gold: #c9a96e;
+    --gold-dim: #8a6e42;
+    --cream: #f0e6cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(ellipse 80% 60% at 15% 40%, rgba(90,55,20,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 85% 70%, rgba(60,35,10,0.12) 0%, transparent 60%);
+    min-height: 100vh;
+    font-family: 'Lora', Georgia, serif;
+    padding-bottom: 8rem;
+  }
+
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 39px,
+      rgba(180,150,90,0.04) 39px, rgba(180,150,90,0.04) 40px
+    );
+    pointer-events: none;
+  }
+
+  .cover-ornament {
+    color: var(--gold-dim);
+    font-size: 1.6rem;
+    letter-spacing: 0.5em;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 0.2s forwards;
+  }
+
+  .cover h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 400;
+    color: var(--cream);
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 0.5s forwards;
+  }
+
+  .cover h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .cover-rule {
+    width: 1px;
+    height: 80px;
+    background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+    margin: 2.5rem auto;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 0.8s forwards;
+  }
+
+  .cover-sub {
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.25em;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1s forwards;
+  }
+
+  .cover-author {
+    margin-top: 1.2rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(201,169,110,0.4);
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.1s forwards;
+  }
+
+  .cover-epigraph {
+    margin-top: 3.5rem;
+    max-width: 420px;
+    font-style: italic;
+    color: rgba(201,169,110,0.45);
+    font-size: 0.88rem;
+    line-height: 1.9;
+    opacity: 0;
+    animation: fadeUp 1.2s ease 1.3s forwards;
+  }
+
+  .cover-epigraph cite {
+    display: block;
+    margin-top: 0.6rem;
+    font-style: normal;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: rgba(201,169,110,0.25);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(201,169,110,0.28);
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 1s ease 2s forwards, pulse 3s ease 3s infinite;
+  }
+
+  .letters-container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+  }
+
+  .letter {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+
+  .letter.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .letter[data-n="1"]  .letter-paper { background-color: #f0ebe0; --accent: #7a5e38; --accent-light: rgba(122,94,56,0.18); --border: rgba(120,95,60,0.18); --top-line: rgba(120,95,60,0.28); }
+  .letter[data-n="2"]  .letter-paper { background-color: #f1ecdf; --accent: #7e6239; --accent-light: rgba(126,98,57,0.2); --border: rgba(126,98,57,0.2); --top-line: rgba(126,98,57,0.32); }
+  .letter[data-n="3"]  .letter-paper { background-color: #f2edde; --accent: #855e36; --accent-light: rgba(133,94,54,0.22); --border: rgba(133,94,54,0.22); --top-line: rgba(133,94,54,0.35); }
+  .letter[data-n="4"]  .letter-paper { background-color: #f3edda; --accent: #8c6030; --accent-light: rgba(140,96,48,0.24); --border: rgba(140,96,48,0.24); --top-line: rgba(140,96,48,0.38); }
+  .letter[data-n="5"]  .letter-paper { background-color: #f4eed6; --accent: #935e2c; --accent-light: rgba(147,94,44,0.27); --border: rgba(147,94,44,0.27); --top-line: rgba(147,94,44,0.42); }
+  .letter[data-n="6"]  .letter-paper { background-color: #f5eed0; --accent: #9c5e28; --accent-light: rgba(156,94,40,0.3); --border: rgba(156,94,40,0.3); --top-line: rgba(156,94,40,0.46); }
+  .letter[data-n="7"]  .letter-paper { background-color: #f6eec8; --accent: #a85e22; --accent-light: rgba(168,94,34,0.33); --border: rgba(168,94,34,0.33); --top-line: rgba(168,94,34,0.5); }
+  .letter[data-n="8"]  .letter-paper { background-color: #f7edbe; --accent: #b45e1c; --accent-light: rgba(180,94,28,0.36); --border: rgba(180,94,28,0.36); --top-line: rgba(180,94,28,0.55); }
+  .letter[data-n="9"]  .letter-paper { background-color: #f8ecb0; --accent: #c06018; --accent-light: rgba(192,96,24,0.4); --border: rgba(192,96,24,0.4); --top-line: rgba(192,96,24,0.6); }
+  .letter[data-n="10"] .letter-paper { background-color: #faeaa0; --accent: #c8780a; --accent-light: rgba(200,120,10,0.45); --border: rgba(200,120,10,0.45); --top-line: rgba(200,120,10,0.7); box-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3), 0 30px 70px rgba(0,0,0,0.4), 0 0 80px rgba(200,150,30,0.12), inset 0 0 80px rgba(220,180,60,0.08) !important; }
+
+  .letter-paper {
+    background-image: linear-gradient(rgba(160,130,80,0.05) 1px, transparent 1px);
+    background-size: 100% 2rem;
+    border-radius: 1px;
+    padding: 4rem 4.5rem 4.5rem;
+    box-shadow:
+      0 2px 4px rgba(0,0,0,0.6),
+      0 8px 24px rgba(0,0,0,0.35),
+      0 30px 70px rgba(0,0,0,0.5),
+      inset 0 0 80px rgba(200,170,100,0.04);
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.5s ease;
+  }
+
+  .letter-paper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--top-line, rgba(139,110,66,0.35)), transparent);
+  }
+
+  .letter-paper::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 0 38px 38px 0;
+    border-color: transparent var(--paper-dark) transparent transparent;
+  }
+
+  .margin-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 3.5rem;
+    width: 1px;
+    background: rgba(180,80,60,0.13);
+  }
+
+  .letter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border, rgba(139,110,66,0.2));
+  }
+
+  .letter-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: var(--accent, var(--gold-dim));
+    opacity: 0.75;
+    line-height: 1;
+  }
+
+  .letter-title-date { text-align: right; }
+
+  .letter-label {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--accent, var(--gold-dim));
+    opacity: 0.6;
+    margin-bottom: 0.3rem;
+  }
+
+  .letter-date {
+    font-style: italic;
+    font-size: 0.88rem;
+    color: rgba(60,46,34,0.55);
+  }
+
+  .salutation {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.28rem;
+    font-style: italic;
+    color: var(--ink-soft);
+    margin-bottom: 1.8rem;
+  }
+
+  .letter-body {
+    font-size: 1.05rem;
+    line-height: 2rem;
+    color: var(--ink);
+    font-weight: 300;
+  }
+
+  .letter-body p {
+    margin-bottom: 1.4rem;
+    text-indent: 1.5em;
+  }
+
+  .letter-body p:first-child { text-indent: 0; }
+  .letter-body em { font-style: italic; color: #2a1e10; }
+
+  .letter-closing {
+    margin-top: 2.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border, rgba(139,110,66,0.15));
+    font-style: italic;
+    color: rgba(60,46,34,0.65);
+    font-size: 0.95rem;
+  }
+
+  .letter-divider {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    opacity: 0;
+    transition: opacity 0.8s ease 0.3s;
+  }
+
+  .letter-divider.visible { opacity: 1; }
+
+  .letter-divider::before,
+  .letter-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,169,110,0.18), transparent);
+  }
+
+  .letter-divider span {
+    color: rgba(201,169,110,0.28);
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+  }
+
+  .site-footer {
+    text-align: center;
+    margin-top: 6rem;
+    padding: 2rem;
+    color: rgba(201,169,110,0.25);
+    font-style: italic;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.28; }
+    50%       { opacity: 0.55; }
+  }
+
+  @media (max-width: 600px) {
+    .letter-paper { padding: 2.5rem 1.8rem 3rem; }
+    .margin-line { left: 1.6rem; }
+    .cover h1 { font-size: clamp(2.4rem, 11vw, 4rem); }
+  }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="cover-ornament">❧</div>
+  <h1>Letters to <em>Winter</em></h1>
+  <div class="cover-rule"></div>
+  <p class="cover-sub">a correspondence never sent</p>
+  <p class="cover-author">Sadi</p>
+  <p class="cover-epigraph">
+    "I can love only what I can place so high above me that I cannot reach it."
+    <cite>— Franz Kafka, Letters to Milena</cite>
+  </p>
+  <p class="scroll-hint">scroll to read</p>
+</section>
+
+<main class="letters-container">
+
+  <article class="letter" data-n="1">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">I.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">First Letter</span>
+          <span class="letter-date">a Tuesday, sometime in November</span>
+        </div>
+      </div>
+      <p class="salutation">Dearest Winter,</p>
+      <div class="letter-body">
+        <p>My mind will never find the answer as to why I am writing this. I don't think you will read it, that was why I found the courage to write this letter. I saw you today through a window, the cafe one, the one with the fogged glass, and you were laughing at something couldn't hear, and I thought, <em>there it is</em>. The precise shape of the living thing I will never deserve. I've memorized every single angle of your face, and I do not know that do I do with myself.</p>
+        <p>It is a strange condition, this. To want so badly and to know, with such certainty, that the wanting is enough. That it has to be. You are not an equation I am trying to solve. Because to me, being a weather suits you the best. You are like the particular quality of light that exists only in the last ten minutes before sun sets and darkness engulfs the world we're in, which you cannot hold and cannot slow and can only stand beneath, tilting your face up, already grieving it.</p>
+      </div>
+      <p class="letter-closing">Cordially, in the only way available to me.</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="2">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">II.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Second Letter</span>
+          <span class="letter-date">Friday, or Saturday, I have lost track</span>
+        </div>
+      </div>
+      <p class="salutation">Dearest Winter,</p>
+      <div class="letter-body">
+        <p>You spoke to me today. Only for quite some time. You asked if I had a pen, I do have one, and I gave it to you, and your fingers didn't touch mine (which is quite unfortunate), and I still spent the rest of the afternoon being grateful for that small mercy, because I wouldn't know myself of what I would've, should've done if they had.</p>
+        <p>And what do I know about you? Little. What I've constructed from the very little? <em>Everything.</em> This is my own particular, self-made madness and I am politely not asking you to forgive me for it. I am only keeping track of it, like how a naturalist records the habits of something he cannot approach, crouching in the brush, scarcely breathing.</p>
+        <p>I returned the pen later. You had already left. I set it on your desk and walked away and felt, absurdly, it felt like I had accomplished something. Like I had been close even if I'm still meters away from you. As if the object had held some warmth from your hand that I was permitted to be in the same room as.</p>
+        <p>I am aware of how this sounds.</p>
+        <p>I am writing it anyway.</p>
+      </div>
+      <p class="letter-closing">still here, still watching the door</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="3">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">III.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Third Letter</span>
+          <span class="letter-date">a morning, the cold one</span>
+        </div>
+      </div>
+      <p class="salutation">Dearest Winter,</p>
+      <div class="letter-body">
+        <p>I had dreamed about you last night and every single fibre of my being didn't regret it even once. Not even slightly. If anything I felt something closer to relief, that even when I'm asleep, even stripped of all my careful discipline, my soul still found it's way back to you. As if you are the only thing my mind returns to the way a tongue returns to a sore tooth. Involuntary and a little painful and completely impossible to stop.</p>
+        <p>In the dream you were simply sitting across a table from me, and the light was shining above you, every inch of your skin was glittering how you looked so impeccable without even breaking a sweat, too golden, and you were looking at me. Actually looking. Not past me, not through me, but <em>at me</em>, the way I have looked at you a hundred times without you having the knowledge of it. And suddenly I woke up and the room was grey and ordinary and you were nowhere in it, and I felt the absence of you like a physical thing, it was painful, and something slipped in my mind — <em>"Ah, if only I had the ability, I would've loved to hold you in my arms."</em></p>
+        <p>I want to be honest in these letters since they are the only honest thing I have, things I can express in the midst of this madness that's happening inside me. So here is the honesty, it is not gentle, what I feel for you. I have been describing it as gentle because gentle is survivable and this, this is not always survivable, there were times it felt like dying. Sometimes it is enormous and it has edges and it presses against the inside of my ribs like it is trying to get out, blood pumping through my chest, like it is furious at being kept, like it knows it deserves more room than I am giving it.</p>
+        <p>I give it this. These letters. This small, insufficient room.</p>
+        <p>Your name is the same as a season and I cannot enter that season without feeling all of it at once, every unsaid thing, every careful distance, feeling like I'm always a light year away from you, every moment I looked at you and swallowed it back down. A quarter of every year. Yours, without your knowledge. Yours, completely.</p>
+        <p>I am not afraid of that. That is perhaps the most alarming thing of all.</p>
+      </div>
+      <p class="letter-closing">— burning, and pretending otherwise</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="4">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">IV.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Fourth Letter</span>
+          <span class="letter-date">Sunday, overcast</span>
+        </div>
+      </div>
+      <p class="salutation">Dearest Winter,</p>
+      <div class="letter-body">
+        <p>I have been attempting to describe you to myself and kept on failing, not for the reason that there is too little to say but for the reason that there is too much, because the moment I try to find and discover one true thing about you, it splits open into ten pieces and those pieces split into ten more, again and again until I am left standing in the middle of something vast and unmanageable, holding a handful of words that are nowhere near sufficient, a universe simply capable of expanding continuously until the end of time.</p>
+        <p>The way you tilt your head when you are listening. The way your voice turns cold when you are being serious, the way your hypnotic eyes alluringly express it's emotions (I know I'm insane). The way you exist in a room, not loud, not by demanding attention, but by making the room much much better simply by being inside it, like a fire makes a room better, the way you become aware of warmth you didn't know you were missing until it was there. For myself I am too heavy, but for you too light.</p>
+        <p>I want to say your name out loud to you and mean it the way I mean it in here. I want to say it and have you understand everything that is packed inside it, all the months, all the letters, all the enormous restrained thing that has been living in my chest since the first time I saw you.</p>
+        <p>I won't. I know I won't. But I want to. God, I want to.</p>
+      </div>
+      <p class="letter-closing">containing myself, barely</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="5">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">V.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Fifth Letter</span>
+          <span class="letter-date">late, very late</span>
+        </div>
+      </div>
+      <p class="salutation">Dearest Winter,</p>
+      <div class="letter-body">
+        <p>Someone asked me today if I was alright. I said yes. I was thinking about the way you hold a cup, both hands, always, even when it isn't hot anymore, and I said yes, fine, completely fine, and I meant none of it. Lying really isn't as easy as it would be, I am writing this letter again to express my most sincere desires.</p>
+        <p>Here is what fine looks like from the inside, it looks like knowing exactly where you are in a room at all times without appearing to look. It always felt like branding it in my head, it's the particular rhythm of your laugh and then lying awake just to replaying it. It looks like wanting so badly and holding so still that the wanting becomes a kind of discipline, a practice, it's perfecting a thing you don't even have to attain, something you get better the more time, the longer you do it, and hating, just slightly, how good you've become.</p>
+        <p>I do not want to be good at this anymore. That is new. For months I was almost comfortable in it, almost grateful for the clean uncomplicated ache of it. Now it feels less like weather and more like a door I am standing in front of, hand raised, not knocking.</p>
+        <p>I don't know what is on the other side of that door.</p>
+        <p>I am terrified of finding out.</p>
+<p>But I am more terrified of never finding out.</p>
+      </div>
+      <p class="letter-closing">faithfully, and less patiently than before</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="6">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">VI.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Sixth Letter</span>
+          <span class="letter-date">a Wednesday, you wore grey</span>
+        </div>
+      </div>
+      <p class="salutation">Dearest Winter,</p>
+      <div class="letter-body">
+        <p>You were tired today. I could tell by the way you moved, it was slower than usual, it looked more like something's weighing you down. And something happened that I was not prepared for, I did not just want to watch you look tired. I wanted to help. I could confidently say that my mind, heart, and body were in perfect sync for the first time in awhile, it wanted to cross the room and ask what was wrong and actually be the person you told things to, actually be permitted inside whatever was making you heavy.</p>
+        <p>I have never wanted that before. I have been so careful to want only what was safe to want, the distant things, the harmless things, the watching from across the room. And now here is this new wanting, this dangerous one, terrifying. The one that wants to be useful to you, to be known by you, to be the name you reach for when the day has been too long. You are always filled of cloudy subtleties I am more than willing to spend a lifetime figuring out.</p>
+        <p>I stayed where I was. Of course I stayed where I was.</p>
+        <p>But it cost more than it used to.</p>
+      </div>
+      <p class="letter-closing">staying, and hating it more each time</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="7">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">VII.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Seventh Letter</span>
+          <span class="letter-date">Thursday, it rained</span>
+        </div>
+      </div>
+      <p class="salutation">Dearest Winter,</p>
+      <div class="letter-body">
+        <p>You have stopped today. You were walking past and you stopped and looked at me to say, you look like you're thinking very hard about something. And I said, just the weather. And you looked at me for a moment longer than necessary (not that I didn't like it). Like you were reading something in my face that I had not given you permission to read, and then you smiled, slow, almost private, and walked away.</p>
+        <p>God, if only you knew what that smile did to me, it stirred me up in the insides, your eyes, I have always loved your eyes. I want to describe it precisely and at length. I will not, because some things should be kept, because some fires you do not describe but only tend, carefully, in private, where no one can see how large they've gotten.</p>
+        <p>But it was large. It is large. Everything about you is large, inside me, in the place I keep you, enormous and burning and utterly still, how it only kept on increasing largely each time.</p>
+        <p>I am running out of room.</p>
+      </div>
+      <p class="letter-closing">eleven times, and the fire is still going</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="8">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">VIII.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Eighth Letter</span>
+          <span class="letter-date">a Friday, you laughed at something I said</span>
+        </div>
+      </div>
+      <p class="salutation">Dearest Winter,</p>
+      <div class="letter-body">
+        <p>You laughed at something I said today and then you came and sat beside me. Not across from me or whatsoever. But beside me. So close, close enough for me to feel the warmth of you despite the name you bear, which I was not prepared for, it completely, utterly, inevitably undid approximately 16 months of careful composure in about four seconds.</p>
+        <p>We talked about nothing in particular and I was burning the entire time and you did not know that and I am simultaneously grateful and devastated that you did not know that. You were just there, easy and warm and real, and I was next to you, burning alive in the most ordinary way, nodding along to a conversation about something I cannot now remember because every single one of my senses and my being was entirely occupied with the fact that you're sitting right beside me.</p>
+        <p>When you left you said, this was nice. Just that. This was nice. And I said, yeah, and you were already walking away, and I sat there for a long time afterward with those three words and the ghost of your warmth beside me and thought that I cannot do this forever. I cannot keep this inside forever. I want to hold you, darling. Something is going to give.</p>
+        <p>I am writing this so it isn't tonight.</p>
+      </div>
+      <p class="letter-closing">barely. barely.</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="9">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">IX.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Ninth Letter</span>
+          <span class="letter-date">a morning I won't forget</span>
+        </div>
+      </div>
+      <p class="salutation">Winter Dearest,</p>
+      <div class="letter-body">
+        <p>You have sent me a message last night. After midnight. It said, I kept thinking about what you said today. The thing about light. I had said something offhand about the way afternoon light comes through dirty glass and how it always looks like it's trying. A small thing. A nothing thing, it should've just passed both your ears.</p>
+        <p>Those were the kinds of things I used to say without thinking, spilling over because I am always too full of things and they come out sideways sometimes, disguised as observations about light.</p>
+        <p>But you thought about it. After midnight you thought about it enough to reach for your phone, enough to find my name, enough to use some of your time just to tell it to me.</p>
+        <p>I lay there for a long time with the phone face-down on my chest, your words pressed against my sternum like a held breath, and I stared at the ceiling and thought, she is somewhere right now, also awake, and she is thinking about something that came out of me. She let it in. She kept it. She carried it all the way to midnight and then she gave it back.</p>
+        <p>I don't have words for what that is, even I am struggling in writing this in letter, this was the very first time my heart and hand trembled at something. Fear is something, but it wasn't fear that was consuming me whole, it was the pure, unscattered thoughts of you. You are so vulnerably haunting, your eeriness is terrifyingly irresistible and I can't help but feel all of it in every drop of blood inside me.</p>
+        <p>I only have this feeling, it's white and consuming, it was a lot like standing too close to something very bright, like being seen by something you have been watching for so long that being seen back feels almost unbearable.</p>
+        <p>Almost. Almost unbearable. And completely, completely wanted.</p>
+      </div>
+      <p class="letter-closing">awake, and finally unafraid of it</p>
+    </div>
+  </article>
+
+  <div class="letter-divider"><span>✦</span></div>
+
+  <article class="letter" data-n="10">
+    <div class="letter-paper">
+      <div class="margin-line"></div>
+      <div class="letter-header">
+        <span class="letter-number">X.</span>
+        <div class="letter-title-date">
+          <span class="letter-label">Last Letter</span>
+          <span class="letter-date">December, the first real snow</span>
+        </div>
+      </div>
+      <p class="salutation">My Darling Winter,</p>
+      <div class="letter-body">
+        <p>It snowed today. You must've already knew what I thought of, you always came to mind when the season is mentioned, now it's happening in front of my very eyes. You called and talked to me through the phone, and when I answered you said, look outside, and I did, and the snow was falling, it was falling at a very unimaginable way, I always hated Winter when I was thirteen, but now I found myself loving it, why? I don't know either, I don't want to know anymore, I just want to occupy my mind with the thoughts of you. What you said was, <em>I keep thinking about you. Not sometimes. Constantly. Is that, is that alright?</em></p>
+        <p>And everything I had been holding for months, all of it, the letters, the distance, the burning careful discipline of wanting you without moving toward you, all of it rose up at once and I said, yes. Yes, it's alright. It's more than alright.</p>
+        <p>You came over. You showed up at my door with snow still caught in your hair and your cheeks gone pink from the cold and you looked at me the way I had been looking at you for months, like I was something worth crossing a room for, worth standing in the cold for, worth saying <em>constantly</em> to at midnight, and I felt the last of the distance dissolve like snow on warm skin, you wore the coat that you've always loved, your eyes met mine, I've always loved your eyes, there was always something about it, and I'll never get tired of loving it, words always seem to burst in your essence and you carry their dust in the pores of your ethereal individuality.</p>
+        <p>We sat by the window and you put your head on my shoulder and your hand found mine and we watched the snow fall together and didn't need to say anything else, because everything had already been said in the months of quiet, in the watching, in the <em>constantly</em>, in the way you came anyway, through the cold, to be here.</p>
+        <p>This is what it feels like. To have the fire finally, finally met.</p>
+        <p>The fire inside wasn't extinguished at all, but it was met with another, cold at that, held at a manageable temperature, the second law of thermodynamics doing it's wonders as both our temperature goes warm enough for us to be able to hold each other more, for a very very long time.</p>
+        <p>Winter.</p>
+        <p>One name, your name.</p>
+        <p>A thousand words, ten letters, countless times of looking, countless times of wondering if I will ever have the luxury to be able to talk to you, countless times of struggling to keep it to myself, multiple times, and countless times of having the thought of loving each other without scruples or fear or restraint. Even if this world comes to an end, even if everything we used to know turns into something we can no longer appreciate.</p>
+        <p>I will still long for you, I always do.</p>
+        <p>I do not know if this letter will find it's way to you. But I hope it is, if only you see what I see, then you'll see how extraordinarily ethereal you are to me.</p>
+      </div>
+      <p class="letter-closing">— finally, and with everything I have</p>
+    </div>
+  </article>
+
+</main>
+
+<footer class="site-footer">
+  <p>Witness &nbsp;·&nbsp; by Sadi</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.letter, .letter-divider').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
